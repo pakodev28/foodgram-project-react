@@ -1,5 +1,3 @@
-from django.db.models.deletion import CASCADE
-from django.db.models.fields.related import ForeignKey
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
@@ -10,39 +8,6 @@ User = get_user_model()
 
 class Ingridient(models.Model):
 
-    MEASUREMENT_UNIT_CHOICES = [
-        (1, "г"),
-        (2, "стакан"),
-        (3, "по вкусу"),
-        (4, "ст. л."),
-        (5, "шт."),
-        (6, "мл"),
-        (7, "ч. л."),
-        (8, "капля"),
-        (9, "звездочка"),
-        (10, "щепотка"),
-        (11, "горсть"),
-        (12, "кусок"),
-        (13, "кг"),
-        (14, "пакет"),
-        (15, "пучок"),
-        (16, "долька"),
-        (17, "банка"),
-        (18, "упаковка"),
-        (19, "зубчик"),
-        (20, "пласт"),
-        (21, "пачка"),
-        (22, "тушка"),
-        (23, "стручок"),
-        (24, "веточка"),
-        (25, "бутылка"),
-        (26, "л"),
-        (27, "батон"),
-        (28, "пакетик"),
-        (29, "лист"),
-        (30, "стебель"),
-    ]
-
     name = models.CharField(
         max_length=60,
         unique=True,
@@ -51,9 +16,7 @@ class Ingridient(models.Model):
         verbose_name="Название",
     )
     measurement_unit = models.CharField(
-        max_length=20,
-        choices=MEASUREMENT_UNIT_CHOICES,
-        default=1,
+        max_length=60,
         verbose_name="Еденицы измерения",
     )
 
@@ -63,7 +26,7 @@ class Ingridient(models.Model):
         verbose_name_plural = "Ингредиенты"
 
     def __str__(self):
-        return self.name
+        return "{}, {}".format(self.name, self.measurement_unit)
 
 
 class Tag(models.Model):
@@ -127,7 +90,7 @@ class IngridientInRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name="ingridient_in_recipe",
     )
-    amount = models.PositiveIntegerField(
+    amount = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)], verbose_name="Количество"
     )
 
