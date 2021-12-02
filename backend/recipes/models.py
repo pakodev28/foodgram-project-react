@@ -6,7 +6,7 @@ from django.db import models
 User = get_user_model()
 
 
-class Ingridient(models.Model):
+class Ingredient(models.Model):
 
     name = models.CharField(
         max_length=60,
@@ -66,7 +66,7 @@ class Recipe(models.Model):
         verbose_name="Время приготовления блюда",
     )
     ingridients = models.ManyToManyField(
-        Ingridient, through="IngridientInRecipe", verbose_name="Ингредиенты"
+        Ingredient, through="IngridientInRecipe", verbose_name="Ингредиенты"
     )
     tags = models.ManyToManyField(
         Tag, related_name="recipe", verbose_name="Теги"
@@ -86,13 +86,18 @@ class IngridientInRecipe(models.Model):
         Recipe, on_delete=models.CASCADE, related_name="ingridient_in_recipe"
     )
     ingridient = models.ForeignKey(
-        Ingridient,
+        Ingredient,
         on_delete=models.CASCADE,
         related_name="ingridient_in_recipe",
+        verbose_name="Ингредиент",
     )
     amount = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)], verbose_name="Количество"
     )
+
+    class Meta:
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
 
 
 class Favorite(models.Model):
@@ -111,6 +116,7 @@ class Favorite(models.Model):
 
     class Meta:
         verbose_name = "Избранное"
+        verbose_name_plural = "Избранное"
 
 
 class ShoppingCart(models.Model):
@@ -129,3 +135,4 @@ class ShoppingCart(models.Model):
 
     class Meta:
         verbose_name = "Список покупок"
+        verbose_name_plural = "Списки покупок"

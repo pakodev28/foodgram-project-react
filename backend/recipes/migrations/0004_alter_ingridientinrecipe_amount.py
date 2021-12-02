@@ -7,13 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0003_alter_ingridient_measurement_unit'),
+        ("recipes", "0003_alter_ingridient_measurement_unit"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ingridientinrecipe',
-            name='amount',
-            field=models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1)], verbose_name='Количество'),
+            model_name="ingridientinrecipe",
+            name="amount",
+            field=models.PositiveSmallIntegerField(
+                validators=[django.core.validators.MinValueValidator(1)],
+                verbose_name="Количество",
+            ),
         ),
     ]
