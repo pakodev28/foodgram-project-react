@@ -27,7 +27,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -45,11 +45,13 @@ INSTALLED_APPS = [
     "colorfield",
     "rest_framework",
     "rest_framework.authtoken",
-    "drf_yasg",
     "djoser",
+    "django_filters",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -139,20 +141,23 @@ MEDIA_ROOT = BASE_DIR / "media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.CustomPageNumberPagination",
 }
 
 DJOSER = {
     "LOGIN_FIELD": "email",
-    'HIDE_USERS': False,
     "SERIALIZERS": {
         "user_create": "api.serializers.UserRegistrationSerializer",
         "user": "api.serializers.MyUserSerializer",
         "current_user": "api.serializers.MyUserSerializer",
     },
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r"^/api/.*$"

@@ -23,12 +23,13 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class IngredientInRecipeInLine(admin.TabularInline):
-    model = Recipe.ingridients.through
+    model = Recipe.ingredients.through
     extra = 1
 
 
 class RecipeAdmin(admin.ModelAdmin):
     list_dispaly = (
+        "pk",
         "name",
         "author",
     )
@@ -41,8 +42,24 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = "-пусто-"
 
 
+class FavoriteAdmin(admin.ModelAdmin):
+    list_dispaly = (
+        "pk",
+        "user",
+        "recipe",
+    )
+
+
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_dispaly = (
+        "pk",
+        "user",
+        "recipe",
+    )
+
+
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Favorite)
-admin.site.register(ShoppingCart)
+admin.site.register(Favorite, FavoriteAdmin)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)

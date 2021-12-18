@@ -60,12 +60,12 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to="media/", verbose_name="Фотография готового блюда"
     )
-    text_description = models.TextField(verbose_name="Описание блюда")
+    text = models.TextField(verbose_name="Описание блюда")
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1)],
         verbose_name="Время приготовления блюда",
     )
-    ingridients = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient, through="IngridientInRecipe", verbose_name="Ингредиенты"
     )
     tags = models.ManyToManyField(
@@ -78,14 +78,14 @@ class Recipe(models.Model):
         verbose_name_plural = "Рецепты"
 
     def __str__(self):
-        return self.name
+        return f"{self.pk}. {self.name}"
 
 
 class IngridientInRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE, related_name="ingridient_in_recipe"
     )
-    ingridient = models.ForeignKey(
+    ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         related_name="ingridient_in_recipe",

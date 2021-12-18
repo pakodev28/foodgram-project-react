@@ -1,14 +1,33 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import IngredientViewSet, TagViewSet
+from .views import (FavoriteView, FollowViewSet, IngredientViewSet,
+                    MyUserViewSet, RecipeViewSet, ShoppingCartView, TagViewSet)
 
 app_name = "api"
 
 router = DefaultRouter()
+router.register("users", MyUserViewSet)
 router.register("tags", TagViewSet)
-router.register("ingredient", IngredientViewSet)
+router.register("ingredients", IngredientViewSet)
+router.register("recipes", RecipeViewSet)
 
 urlpatterns = [
+    path("auth/", include("djoser.urls.authtoken")),
+    path(
+        "recipes/<int:id>/favorite/",
+        FavoriteView.as_view(),
+        name="favorite",
+    ),
+    path(
+        "recipes/<int:id>/shopping_cart/",
+        ShoppingCartView.as_view(),
+        name="shopping_cart",
+    ),
+    path(
+        "users/subscriptions/",
+        FollowViewSet.as_view({"get": "list"}),
+        name="subscriptions",
+    ),
     path("", include(router.urls)),
 ]

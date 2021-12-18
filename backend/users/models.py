@@ -24,4 +24,4 @@ class Follow(models.Model):
         unique_together = ("user", "author")
 
         def __str__(self):
-            return f"{self.user} подписан на {self.author}"
+            return "{} подписан на {}".format(self.user, self.author)
