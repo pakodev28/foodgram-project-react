@@ -1,3 +1,4 @@
+from re import S
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
@@ -78,7 +79,7 @@ class Recipe(models.Model):
         verbose_name_plural = "Рецепты"
 
     def __str__(self):
-        return f"{self.pk}. {self.name}"
+        return self.name
 
 
 class IngridientInRecipe(models.Model):
@@ -115,6 +116,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        unique_together = ("user", "recipe")
         verbose_name = "Избранное"
         verbose_name_plural = "Избранное"
 
@@ -134,5 +136,6 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        unique_together = ("user", "recipe")
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"

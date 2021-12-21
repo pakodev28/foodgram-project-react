@@ -4,7 +4,7 @@ from .models import Ingredient, Tag, Recipe, Favorite, ShoppingCart
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_dispaly = (
+    list_display = (
         "name",
         "measurement_unit",
     )
@@ -28,10 +28,10 @@ class IngredientInRecipeInLine(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_dispaly = (
-        "pk",
+    list_display = (
         "name",
         "author",
+        "favorite_count",
     )
     inlines = (IngredientInRecipeInLine,)
     list_filter = (
@@ -41,9 +41,13 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     empty_value_display = "-пусто-"
 
+    @admin.display(description="В избранном")
+    def favorite_count(self, obj):
+        return Favorite.objects.filter(recipe=obj).count()
+
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_dispaly = (
+    list_display = (
         "pk",
         "user",
         "recipe",
@@ -51,7 +55,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_dispaly = (
+    list_display = (
         "pk",
         "user",
         "recipe",

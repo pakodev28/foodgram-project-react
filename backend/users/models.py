@@ -23,5 +23,5 @@ class Follow(models.Model):
         verbose_name_plural = "Подписки"
         unique_together = ("user", "author")
 
-        def __str__(self):
-            return "{} подписан на {}".format(self.user, self.author)
+    def __str__(self):
+        return "{} подписан на {}".format(self.user, self.author)

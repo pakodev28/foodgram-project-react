@@ -3,23 +3,46 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import SetPasswordSerializer
-from rest_framework import mixins, permissions, status, views, viewsets
+from rest_framework import (
+    mixins,
+    permissions,
+    serializers,
+    status,
+    views,
+    viewsets,
+)
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import (GenericViewSet, ModelViewSet,
-                                     ReadOnlyModelViewSet)
+from rest_framework.viewsets import (
+    GenericViewSet,
+    ModelViewSet,
+    ReadOnlyModelViewSet,
+)
 
-from recipes.models import (Favorite, Ingredient, IngridientInRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngridientInRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag,
+)
 from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (FavoriteSerializer, FolllowSerializer,
-                          IngredientSerializer, MyUserSerializer,
-                          RecipeGetSerializer, RecipeSerializer,
-                          ShoppingCartSerializer, TagSerializer,
-                          UserRegistrationSerializer)
+from .serializers import (
+    FavoriteSerializer,
+    FolllowSerializer,
+    IngredientSerializer,
+    MyUserSerializer,
+    RecipeGetSerializer,
+    RecipeSerializer,
+    ShoppingCartSerializer,
+    TagSerializer,
+    UserRegistrationSerializer,
+    SubscribeSerializer,
+)
 
 User = get_user_model()
 
@@ -89,12 +112,18 @@ class MyUserViewSet(
         url_path="subscribe",
     )
     def subscribe(self, request, pk=None):
-        author = self.get_object()
+        author = get_object_or_404(User, id=pk)
+        data = {
+            "user": request.user.id,
+            "author": author.id,
+        }
+
         if request.method == "GET":
-            instance = Follow.objects.create(author=author, user=request.user)
-            serializer = FolllowSerializer(
-                author, context={"request": request}
+            serializer = SubscribeSerializer(
+                context={"request": request}, data=data
             )
+            serializer.is_valid(raise_exception=True)
+            instance = Follow.objects.create(author=author, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         instance = Follow.objects.filter(author=author, user=request.user)
         instance.delete()
@@ -106,12 +135,16 @@ class FavoriteView(views.APIView):
 
     def get(self, request, id=None):
         obj = Favorite.objects.filter(user=request.user, recipe_id=id).exists()
+        recipe = get_object_or_404(Recipe, id=id)
+
         if obj:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = {"recipe": recipe}
+        serializer = FavoriteSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
         Favorite.objects.create(user=request.user, recipe_id=id)
 
-        serialized = FavoriteSerializer(get_object_or_404(Recipe, id=id))
-        return Response(serialized.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id=None):
         obj = Favorite.objects.filter(user=request.user, recipe_id=id).exists()
@@ -128,12 +161,15 @@ class ShoppingCartView(views.APIView):
         obj = ShoppingCart.objects.filter(
             user=request.user, recipe_id=id
         ).exists()
+        recipe = get_object_or_404(Recipe, id=id)
+
         if obj:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = {"recipe": recipe}
+        serializer = ShoppingCartSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
         ShoppingCart.objects.create(user=request.user, recipe_id=id)
-
-        serialized = ShoppingCartSerializer(get_object_or_404(Recipe, id=id))
-        return Response(serialized.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id=None):
         obj = ShoppingCart.objects.filter(

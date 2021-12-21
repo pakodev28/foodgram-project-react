@@ -3,8 +3,14 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import (Favorite, Ingredient, IngridientInRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngridientInRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag,
+)
 from users.models import Follow
 
 from .fields import Base64ImageField
@@ -269,3 +275,13 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(
             user=self.context["request"].user.id, recipe=obj.id
         ).exists()
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    queryset = User.objects.all()
+    user = serializers.PrimaryKeyRelatedField(queryset=queryset)
+    author = serializers.PrimaryKeyRelatedField(queryset=queryset)
+
+    class Meta:
+        model = Follow
+        fields = ("user", "author")
