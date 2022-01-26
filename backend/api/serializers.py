@@ -216,6 +216,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -240,7 +241,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             if int(ingredient["amount"]) < 1:
                 raise serializers.ValidationError(
-                    "Вы указали колличество меньше 1"
+                    "Колличество ингредиентов должно быть больше нуля"
                 )
             id = ingredient.get("id")
             ingredients_set.add(id)
