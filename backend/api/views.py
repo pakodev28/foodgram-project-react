@@ -3,41 +3,23 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import SetPasswordSerializer
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    IngridientInRecipe,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
-from rest_framework import (
-    generics,
-    mixins,
-    permissions,
-    status,
-    views,
-    viewsets,
-)
+from rest_framework import (generics, mixins, permissions, status, views,
+                            viewsets)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
+from recipes.models import (Favorite, Ingredient, IngridientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (
-    FavoriteSerializer,
-    FolllowSerializer,
-    IngredientSerializer,
-    MyUserSerializer,
-    RecipeCreateSerializer,
-    RecipeGetSerializer,
-    ShoppingCartSerializer,
-    SubscribeSerializer,
-    TagSerializer,
-    UserRegistrationSerializer,
-)
+from .serializers import (FavoriteSerializer, FolllowSerializer,
+                          IngredientSerializer, MyUserSerializer,
+                          RecipeCreateSerializer, RecipeGetSerializer,
+                          ShoppingCartSerializer, SubscribeSerializer,
+                          TagSerializer, UserRegistrationSerializer)
 
 User = get_user_model()
 

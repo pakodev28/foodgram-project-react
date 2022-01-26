@@ -2,15 +2,10 @@ from django.contrib.auth import get_user_model
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    IngridientInRecipe,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
 from rest_framework import serializers
+
+from recipes.models import (Favorite, Ingredient, IngridientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Follow
 
 from .fields import Base64ImageField
