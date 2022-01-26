@@ -35,6 +35,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE}}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:v5
+            cd infra/
             sudo docker-compose stop
             sudo docker-compose rm -f web
             sudo rm -f .env
