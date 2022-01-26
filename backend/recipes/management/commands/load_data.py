@@ -3,7 +3,7 @@ from csv import reader
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 
-from recipes.models import Ingridient
+from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
@@ -15,7 +15,7 @@ class Command(BaseCommand):
             for row in my_reader:
                 name, measurement_unit = row
                 try:
-                    Ingridient.objects.get_or_create(
+                    Ingredient.objects.get_or_create(
                         name=name, measurement_unit=measurement_unit
                     )
                 except IntegrityError:

@@ -4,20 +4,16 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import SetPasswordSerializer
 from rest_framework import (
+    generics,
     mixins,
     permissions,
-    serializers,
     status,
     views,
     viewsets,
 )
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import (
-    GenericViewSet,
-    ModelViewSet,
-    ReadOnlyModelViewSet,
-)
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from recipes.models import (
     Favorite,
@@ -36,12 +32,12 @@ from .serializers import (
     FolllowSerializer,
     IngredientSerializer,
     MyUserSerializer,
+    RecipeCreateSerializer,
     RecipeGetSerializer,
-    RecipeSerializer,
     ShoppingCartSerializer,
+    SubscribeSerializer,
     TagSerializer,
     UserRegistrationSerializer,
-    SubscribeSerializer,
 )
 
 User = get_user_model()
@@ -50,6 +46,7 @@ User = get_user_model()
 class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
     permission_classes = (IsAdminOrReadOnly,)
 
 
@@ -57,8 +54,10 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     search_fields = ("^name",)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
 
 
 class MyUserViewSet(
@@ -69,9 +68,7 @@ class MyUserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
-    permission_classes = [
-        permissions.AllowAny,
-    ]
+    permission_classes = (permissions.AllowAny,)
 
     def get_serializer_class(self):
         if self.action == "set_password":
@@ -84,7 +81,7 @@ class MyUserViewSet(
 
     @action(
         methods=["get"],
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=(permissions.IsAuthenticated,),
         detail=False,
     )
     def me(self, request):
@@ -93,7 +90,7 @@ class MyUserViewSet(
 
     @action(
         methods=["post"],
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=(permissions.IsAuthenticated,),
         detail=False,
     )
     def set_password(self, request):
@@ -181,26 +178,36 @@ class ShoppingCartView(views.APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FollowViewSet(mixins.ListModelMixin, GenericViewSet):
-    serializer_class = FolllowSerializer
+class FollowView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    http_method_names = ["get"]
+    serializer_class = FolllowSerializer
 
     def get_queryset(self):
-        return User.objects.filter(follow__user=self.request.user)
+        queryset = User.objects.filter(follow__user_id=self.request.user.id)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = FolllowSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        page = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(page)
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
     permission_classes = (IsAuthorOrReadOnly,)
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
+        method = self.request.method
+        if method == "GET":
             return RecipeGetSerializer
-        return RecipeSerializer
+        return RecipeCreateSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -208,7 +215,7 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=False,
         methods=["get"],
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=(permissions.IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
         res_queryset = {}

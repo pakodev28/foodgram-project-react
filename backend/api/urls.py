@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     FavoriteView,
-    FollowViewSet,
+    FollowView,
     IngredientViewSet,
     MyUserViewSet,
     RecipeViewSet,
@@ -33,7 +33,7 @@ urlpatterns = [
     ),
     path(
         "users/subscriptions/",
-        FollowViewSet.as_view({"get": "list"}),
+        FollowView.as_view(),
         name="subscriptions",
     ),
     path("", include(router.urls)),
