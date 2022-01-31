@@ -47,3 +47,7 @@
 - PostgreSQL
 - Docker
 - Nginx
+
+*backend - pakodev28*
+
+*frontend - студенты факультета web-разработки Я.Практикума*
