@@ -8,7 +8,7 @@
 ### Данные для входа на сайт login: guest@qq.com password: guest12345qq
 
 
-## Как пазвернуть проект:
+## Как развернуть проект:
 1. Склонировать проект, перейти в папку infra, настроить .env файл:
     ```
     git clone git@github.com:pakodev28/foodgram-project-react.git
