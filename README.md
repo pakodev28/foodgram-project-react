@@ -1,11 +1,11 @@
+[![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
+[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/)
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
+
+
 ## Описание:
 
 Онлайн-сервис Foodgram и API. Сервис предоставляет возможность пользователям публиковать свои рецепты. Есть возможность подписаться на понравившихся авторов рецептов. Добавть рецепт в список покупок и скачать его.
-
-
-### Адрес http://51.250.20.252/
-
-### Данные для входа на сайт login: guest@qq.com password: guest12345qq
 
 
 ## Как развернуть проект:
@@ -44,10 +44,11 @@
 - Python 3.8
 - Django 3.2
 - DRF
+- Gunicorn
 - PostgreSQL
 - Docker
 - Nginx
 
-*backend - pakodev28*
+*backend - https://github.com/pakodev28*
 
-*frontend - студенты факультета web-разработки Я.Практикума*
+*frontend - https://github.com/yandex-praktikum*
